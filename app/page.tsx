@@ -1,103 +1,94 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { DotPulse } from 'ldrs/react'
+import 'ldrs/react/DotPulse.css'
+
+export default function Home() {   
+  type definitions = {
+    definition: string | undefined,
+    example: string | undefined,
+  };
+
+  const [word, setWord] = useState('');
+  const [isFetching, setIsFetching] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
+  const [currentWord, setCurrentWord] = useState('');
+  const [definitions, setDefinitions] = useState<definitions[]>([
+    {
+      definition: undefined,
+      example: undefined,
+    }
+  ]);
+
+  const getWord = async () => {
+    event?.preventDefault();
+    setIsFetching(true);
+    
+    try {
+      setWord("")
+      const response = await fetch (`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+      const data = await response.json();
+      
+      setCurrentWord(data[0].word)
+      setIsNotFound(false);
+      console.log(data[0].meanings)
+      setDefinitions(data[0].meanings[0].definitions);
+      
+    } catch(err) {
+        setIsNotFound(true);
+        console.log(err);
+    } finally {
+        setIsFetching(false);
+    };    
+  };
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="flex flex-col h-screen items-center justify-center">
+      <div className="flex flex-col bg-blue-800/10 w-[95%] lg:w-[60%] max-h-[90dvh] rounded-2xl p-2 shadow-2xl overflow-y-auto no-scrollbar">
+        <form className="flex p-2 gap-2">
+          <input type="text" placeholder="Search for a word" value={word} onChange={e => setWord(e.target.value)} className="w-full outline-0 border-b-2 border-blue-800/50 hover:border-blue-800/70 focus:border-blue-800/90 p-1 transition-all" />
+          <button onClick={getWord} className="p-2 hover:bg-blue-800/50 active:bg-blue-800/70 rounded-full transition">
+            <FaSearch />
+          </button>
+        </form>
+        <div className={`${isFetching ? 'block' : 'hidden'} m-auto w-fit my-2`}>
+          <DotPulse
+            size="43"
+            speed="1.3"
+            color="blue" 
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <div>
+          <p className={`${isNotFound ? 'block' : 'hidden'} m-auto w-fit text-red-500 my-2`}>Word not found</p>
+        </div>
+        <div className={`${isNotFound ? 'hidden' : 'block'}`}>
+          
+          <section className={`${definitions[0].definition ? 'block' : 'hidden'}`}>
+            <h2 className="text-2xl font-semibold p-2 mt-2">{`Meaning of ${currentWord}`}</h2>
+            <ul className="flex flex-col gap-2 p-4">
+              {
+                definitions?.map((value, index) => {
+                  return <li key={index}>{value.definition}</li>
+                })
+              }
+            </ul>
+          </section>
+          
+          <section className={`${definitions[0].example ? 'block' : 'hidden'}`}>
+            <h2 className={`text-2xl font-semibold p-2`}>Examples</h2>
+            <ul className="flex flex-col gap-2 p-4">
+              {
+                definitions?.map((value, index) => {
+                  return value.example ? <li key={index}>{`"${value.example}"`}</li>
+                  : null
+                })
+              }
+            </ul>
+          </section>
+        </div>
+      </div>
+    </main>
   );
-}
+};
