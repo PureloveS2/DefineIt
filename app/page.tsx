@@ -45,7 +45,7 @@ export default function Home() {
   };
   
   return (
-    <main className="flex flex-col h-screen items-center justify-center">
+    <main className="flex flex-col h-dvh items-center justify-center">
       <div className="flex flex-col bg-blue-800/10 w-[95%] lg:w-[60%] max-h-[90dvh] rounded-2xl p-2 shadow-2xl overflow-y-auto no-scrollbar">
         <form className="flex p-2 gap-2">
           <input type="text" placeholder="Search for a word" value={word} onChange={e => setWord(e.target.value)} className="w-full outline-0 border-b-2 border-blue-800/50 hover:border-blue-800/70 focus:border-blue-800/90 p-1 transition-all" />
